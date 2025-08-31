@@ -26,11 +26,6 @@ export class TaskManager {
         this.dailyResetButton = document.getElementById('daily-reset-button');
         this.exportButton = document.getElementById('export-button');
         
-        // Ensure modal is hidden on initialization
-        if (this.addTaskModal) {
-            this.addTaskModal.classList.add('hidden');
-        }
-        
         // Debug log to check if elements are found
         if (!this.cancelTaskButton) {
             console.warn('Cancel button not found during TaskManager initialization');
