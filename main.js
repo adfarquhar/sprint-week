@@ -8,8 +8,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Import our modules
+// Import all modules
 import { TaskManager } from './taskManager.js';
+import { ExcuseTracker } from './excuseTracker.js';
+import { SessionScheduler } from './sessionScheduler.js';
+import { PomodoroTimer, StandupTimer } from './timers.js';
+import { VelocityChart } from './velocityChart.js';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -26,8 +30,20 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Initialize managers
+// Current user state
+let currentUser = null;
+let currentUserRole = null;
+
+// Helper function for modules that need user info
+const getCurrentUser = () => ({ currentUser, currentUserRole });
+
+// Initialize all managers
 const taskManager = new TaskManager(db);
+const excuseTracker = new ExcuseTracker(db);
+const sessionScheduler = new SessionScheduler(db, getCurrentUser);
+const pomodoroTimer = new PomodoroTimer();
+const standupTimer = new StandupTimer();
+const velocityChart = new VelocityChart(db);
 
 // DOM Elements
 const loginScreen = document.getElementById('login-screen');
@@ -35,10 +51,6 @@ const mainApp = document.getElementById('main-app');
 const loginForm = document.getElementById('login-form');
 const logoutButton = document.getElementById('logout-button');
 const userProfile = document.getElementById('user-profile');
-
-// Current user state
-let currentUser = null;
-let currentUserRole = null;
 
 // Authentication State Listener
 onAuthStateChanged(auth, user => {
@@ -52,13 +64,9 @@ onAuthStateChanged(auth, user => {
         
         // Load all features
         taskManager.loadTasks();
-        
-        // TODO: Load other features as we modularize them
-        // excuseManager.loadExcuses();
-        // sessionScheduler.loadSessions();
-        // pomodoroTimer.initialize();
-        // standupTimer.initialize();
-        // velocityChart.load();
+        excuseTracker.loadExcuses();
+        sessionScheduler.loadSessions();
+        velocityChart.load();
         
     } else {
         currentUser = null;
