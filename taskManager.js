@@ -26,30 +26,47 @@ export class TaskManager {
         this.dailyResetButton = document.getElementById('daily-reset-button');
         this.exportButton = document.getElementById('export-button');
         
+        // Debug log to check if elements are found
+        if (!this.cancelTaskButton) {
+            console.warn('Cancel button not found during TaskManager initialization');
+        }
+        
         this.initializeEventListeners();
         this.setupDragAndDrop();
     }
 
     initializeEventListeners() {
-        // Add Task Button
-        this.addTaskButton?.addEventListener('click', () => {
-            this.addTaskModal.classList.remove('hidden');
-        });
+        // Add Task Button - open modal
+        if (this.addTaskButton && this.addTaskModal) {
+            this.addTaskButton.addEventListener('click', () => {
+                console.log('Opening task modal');
+                this.addTaskModal.classList.remove('hidden');
+            });
+        }
 
-        // Cancel Task Button
-        this.cancelTaskButton?.addEventListener('click', () => {
-            this.addTaskModal.classList.add('hidden');
-            this.addTaskForm.reset();
-        });
+        // Cancel Task Button - close modal
+        if (this.cancelTaskButton && this.addTaskModal && this.addTaskForm) {
+            this.cancelTaskButton.addEventListener('click', () => {
+                console.log('Closing task modal');
+                this.addTaskModal.classList.add('hidden');
+                this.addTaskForm.reset();
+            });
+        }
 
         // Add Task Form Submit
-        this.addTaskForm?.addEventListener('submit', (e) => this.handleAddTask(e));
+        if (this.addTaskForm) {
+            this.addTaskForm.addEventListener('submit', (e) => this.handleAddTask(e));
+        }
 
         // Daily Reset Button
-        this.dailyResetButton?.addEventListener('click', () => this.handleDailyReset());
+        if (this.dailyResetButton) {
+            this.dailyResetButton.addEventListener('click', () => this.handleDailyReset());
+        }
 
         // Export Button
-        this.exportButton?.addEventListener('click', () => this.exportTodaysTasks());
+        if (this.exportButton) {
+            this.exportButton.addEventListener('click', () => this.exportTodaysTasks());
+        }
     }
 
     async handleAddTask(e) {
