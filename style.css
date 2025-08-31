@@ -1,1 +1,374 @@
-/* Add styles here */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+#login-screen {
+    text-align: center;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#login-screen h1 {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+#login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#login-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#main-app {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.hidden {
+    display: none;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    gap: 15px; /* Add some gap for better spacing */
+}
+
+header h1 {
+    color: #007bff;
+    margin: 0;
+    flex-shrink: 0; /* Prevent heading from shrinking too much */
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap; /* Allow controls to wrap */
+}
+
+#pomodoro-timer-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #e0f2f7; /* Light blue background for visibility */
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+#pomodoro-display {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #007bff;
+    min-width: 70px; /* Ensure consistent width */
+    text-align: center;
+}
+
+#pomodoro-timer-container button {
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+
+#user-profile {
+    font-weight: bold;
+    color: #555;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#task-board {
+    flex: 3;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.task-column {
+    background-color: #f0f2f5;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    min-height: 200px; /* Ensure columns have some height */
+}
+
+.task-column h2 {
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.task-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    cursor: grab;
+    transition: transform 0.2s ease-in-out;
+}
+
+.task-card:active {
+    cursor: grabbing;
+    transform: scale(1.02);
+}
+
+.task-card h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.task-card p {
+    margin: 4px 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Priority Color Coding */
+.task-card.high-priority {
+    border-left: 5px solid #dc3545; /* Red */
+}
+
+.task-card.medium-priority {
+    border-left: 5px solid #ffc107; /* Orange/Yellow */
+}
+
+.task-card.low-priority {
+    border-left: 5px solid #28a745; /* Green */
+}
+
+/* Assigned Person Color Coding */
+.assigned-to {
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.real-estate-agent {
+    background-color: #e0f2f7; /* Light Blue */
+    color: #007bff; /* Blue */
+}
+
+.app-developer {
+    background-color: #e6ffe6; /* Light Green */
+    color: #28a745; /* Green */
+}
+
+/* Controls, Timer, Progress */
+#controls {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#timer-container, #progress-container {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#timer-container h2, #progress-container h2 {
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+#timer {
+    font-size: 2.5em;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+#standup-prompts p {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+#progress-meter {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 30px;
+    margin-top: 10px;
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #28a745; /* Green for progress */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    transition: width 0.5s ease-in-out;
+}
+
+#sprint-velocity-chart {
+    margin-top: 20px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px dashed #ced4da;
+    text-align: center;
+    color: #6c757d;
+}
+
+/* Buttons */
+button {
+    padding: 12px 20px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease-in-out;
+}
+
+button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Modal */
+#add-task-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#add-task-form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+    max-width: 400px;
+}
+
+#add-task-form h2 {
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#add-task-form input, #add-task-form textarea, #add-task-form select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+#add-task-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+#add-task-form button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#add-task-form #cancel-task-button {
+    background-color: #6c757d;
+}
+
+#add-task-form #cancel-task-button:hover {
+    background-color: #5a6268;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .header-controls {
+        flex-direction: column;
+        width: 100%; /* Make controls take full width */
+        gap: 10px;
+    }
+
+    #pomodoro-timer-container {
+        width: 100%; /* Make pomodoro timer take full width */
+        justify-content: center; /* Center items in pomodoro timer */
+    }
+
+    #task-board {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        flex-direction: column;
+    }
+
+    #controls, #timer-container, #progress-container {
+        width: 100%;
+    }
+}
