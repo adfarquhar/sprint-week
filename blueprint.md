@@ -13,6 +13,8 @@ This document outlines the plan for creating a simple Sprint Task Tracker web ap
 *   **Daily Standup Timer:** 15-minute countdown with prompts. **(Implemented)**
 *   **Progress Meter:** Percentage of completed vs. planned tasks. **(Implemented)**
 *   **Authentication:** Email/password login with data persistence in Firestore. **(Implemented)**
+*   **Pomodoro Timer:** A simple Pomodoro timer (25 min work, 5 min break) in the header. **(Implemented)**
+*   **Excuse Tracker:** A section to log excuses and mark them as 'valid' or 'invalid'. **(Implemented)**
 
 ## Simple Features
 
@@ -29,13 +31,12 @@ This document outlines the plan for creating a simple Sprint Task Tracker web ap
 *   **Color Coding:**
     *   Real Estate Agent: Blue
     *   App Developer: Green
-    *   Shared: Purple (currently not used for tasks but for shared UI elements if applicable)
 *   **Usability:** Large, clickable elements. **(Implemented)**
 
 ## Development Plan
 
 1.  **HTML Structure (`index.html`):**
-    *   Create the main layout with containers for the login screen, task board, timer, and progress meter. **(Done)**
+    *   Create the main layout with containers for the login screen, task board, timer, progress meter, and excuse tracker. **(Done)**
     *   Link to `style.css` and `main.js`. **(Done)**
     *   Include Firebase SDKs from the CDN. **(Done - now using modular SDKs)**
 
@@ -43,6 +44,7 @@ This document outlines the plan for creating a simple Sprint Task Tracker web ap
     *   Apply a clean and modern design. **(Done)**
     *   Implement a mobile-responsive layout. **(Done)**
     *   Define the color-coding scheme. **(Done)**
+    *   Style the Pomodoro timer and Excuse Tracker. **(Done)**
 
 3.  **JavaScript Logic (`main.js`):**
     *   **Authentication:**
@@ -52,6 +54,10 @@ This document outlines the plan for creating a simple Sprint Task Tracker web ap
         *   Enable drag-and-drop functionality. **(Done)**
     *   **Timer and Progress Meter:**
         *   Create the countdown timer and progress meter components. **(Done)**
+    *   **Pomodoro Timer:**
+        *   Implement the logic for the Pomodoro timer. **(Done)**
+    *   **Excuse Tracker:**
+        *   Implement logic to add, load, and update excuses in Firestore. **(Done)**
     *   **Data Handling:**
         *   Interact with Firestore for data storage. **(Done - now using modular SDKs)**
         *   Implement the daily reset and export features. **(Done)**
@@ -61,19 +67,9 @@ This document outlines the plan for creating a simple Sprint Task Tracker web ap
     *   Set up a new Firebase project. **(Requires user action and updating `firebaseConfig` in `main.js`)**
     *   Configure Firestore and Firebase Authentication. **(Requires user action and updating `firebaseConfig` in `main.js`)**
     *   Add Firebase configuration to `main.js`. **(Done)**
+    *   Secure Firestore with appropriate rules for the `excuses` collection. **(Requires user action)**
 
 ## Current Status
 
-*   Initial HTML, CSS, and JS structure are in place.
-*   Firebase Authentication (login/logout) and Firestore integration for tasks are functional, now using the modular SDK.
-*   Tasks can be added, moved between columns (drag & drop), and their status is updated in Firestore.
-*   Daily standup timer is implemented.
-*   Progress meter shows completion percentage.
-*   Daily reset archives completed tasks to a `daily_archive` collection.
-*   Export of today's accomplishments is functional (copies to clipboard).
-*   Sprint velocity chart now displays a textual summary from `daily_archive`.
-*   `.idx/mcp.json` has been updated to include Firebase server configuration.
-
-## Next Steps
-
-The core functionality and modular Firebase SDK migration are complete. The application should now be fully functional. No further steps are immediately required based on the current context.
+*   The Excuse Tracker has been added and is fully functional.
+*   The `blueprint.md` file has been updated to reflect the new feature.
