@@ -188,7 +188,7 @@ main {
 }
 
 /* Controls, Timer, Progress, Excuse Tracker */
-#controls, #timer-container, #progress-container, #excuse-tracker-container {
+#controls, #timer-container, #progress-container, #excuse-tracker-container, #session-scheduler-container {
     flex: 1;
     background-color: #fff;
     padding: 20px;
@@ -197,7 +197,7 @@ main {
     margin-bottom: 20px;
 }
 
-#timer-container h2, #progress-container h2, #excuse-tracker-container h2 {
+#timer-container h2, #progress-container h2, #excuse-tracker-container h2, #session-scheduler-container h2 {
     color: #007bff;
     margin-top: 0;
     margin-bottom: 15px;
@@ -338,6 +338,40 @@ main {
     background-color: #c82333;
 }
 
+/* Session Scheduler */
+#time-slots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.time-slot {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.time-slot.available:hover {
+    background-color: #cce5ff;
+}
+
+.time-slot.claimed {
+    background-color: #f8d7da;
+    color: #721c24;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.time-slot.mine {
+    background-color: #d4edda;
+    color: #155724;
+    cursor: pointer;
+}
+
+
 /* Buttons */
 button {
     padding: 12px 20px;
@@ -444,7 +478,7 @@ button:disabled {
         flex-direction: column;
     }
 
-    #controls, #timer-container, #progress-container, #excuse-tracker-container {
+    #controls, #timer-container, #progress-container, #excuse-tracker-container, #session-scheduler-container {
         width: 100%;
     }
 }

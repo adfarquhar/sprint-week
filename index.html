@@ -80,6 +80,12 @@
                     </form>
                     <div id="excuses-list"></div>
                 </div>
+
+                <!-- Sister Support Session Scheduler -->
+                <div id="session-scheduler-container">
+                    <h2>Sister Support Sessions</h2>
+                    <div id="time-slots-container"></div>
+                </div>
             </main>
         </div>
 
@@ -105,9 +111,11 @@
     </div>
 
     <!-- Firebase SDKs - Modular (Version 9+) -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, orderBy, onSnapshot, query, Timestamp, FieldValue, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    </script>
 
     <script type="module" src="main.js"></script>
 </body>

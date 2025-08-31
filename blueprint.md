@@ -15,6 +15,7 @@ This document outlines the plan for creating a simple Sprint Task Tracker web ap
 *   **Authentication:** Email/password login with data persistence in Firestore. **(Implemented)**
 *   **Pomodoro Timer:** A simple Pomodoro timer (25 min work, 5 min break) in the header. **(Implemented)**
 *   **Excuse Tracker:** A section to log excuses and mark them as 'valid' or 'invalid'. **(Implemented)**
+*   **Sister Support Session Scheduler:** 30-minute blocks that users can claim to help each other.
 
 ## Simple Features
 
@@ -69,7 +70,18 @@ This document outlines the plan for creating a simple Sprint Task Tracker web ap
     *   Add Firebase configuration to `main.js`. **(Done)**
     *   Secure Firestore with appropriate rules for the `excuses` collection. **(Requires user action)**
 
+5.  **Sister Support Session Scheduler (`index.html`, `style.css`, `main.js`):**
+    *   Add a new section to `index.html` to house the scheduler.
+    *   Add styling to `style.css` for the scheduler, including states for available, claimed, and the user's own claimed slots.
+    *   In `main.js`:
+        *   Dynamically generate time slots for the day (e.g., 9:00 AM to 5:00 PM).
+        *   Create a new Firestore collection `sessions` to store the schedule.
+        *   Implement logic to load the session schedule from Firestore.
+        *   Add event listeners to the time slots to allow users to claim them.
+        *   When a user claims a slot, update the corresponding document in the `sessions` collection.
+        *   Ensure the schedule updates in real-time using Firestore snapshots.
+    *   Update Firestore rules to allow authenticated users to read and write to the `sessions` collection.
+
 ## Current Status
 
-*   The Excuse Tracker has been added and is fully functional.
-*   The `blueprint.md` file has been updated to reflect the new feature.
+*   The `blueprint.md` file has been updated to include the new "Sister Support Session Scheduler" feature.
