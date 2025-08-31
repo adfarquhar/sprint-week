@@ -26,6 +26,11 @@ export class TaskManager {
         this.dailyResetButton = document.getElementById('daily-reset-button');
         this.exportButton = document.getElementById('export-button');
         
+        // Ensure modal is hidden on initialization
+        if (this.addTaskModal) {
+            this.addTaskModal.classList.add('hidden');
+        }
+        
         // Debug log to check if elements are found
         if (!this.cancelTaskButton) {
             console.warn('Cancel button not found during TaskManager initialization');
@@ -46,7 +51,9 @@ export class TaskManager {
 
         // Cancel Task Button - close modal
         if (this.cancelTaskButton && this.addTaskModal && this.addTaskForm) {
-            this.cancelTaskButton.addEventListener('click', () => {
+            this.cancelTaskButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent any default button behavior
+                e.stopPropagation(); // Stop event from bubbling up
                 console.log('Closing task modal');
                 this.addTaskModal.classList.add('hidden');
                 this.addTaskForm.reset();
