@@ -1,8 +1,8 @@
 import React from 'react';
 import { useDrop, useDrag } from 'react-dnd';
-import { User, Clock, AlertTriangle, Calendar, Flag, CheckCircle } from 'lucide-react';
+import { User, Clock, AlertTriangle, Calendar, Flag, CheckCircle, Edit2 } from 'lucide-react';
 
-const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }) => {
+const TaskItem = ({ task, onMoveTask, onEditTask, bulkActionMode, isSelected, onTaskSelect }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'task',
     item: { id: task.id, status: task.status },
@@ -146,6 +146,15 @@ const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }
 
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-1 pt-3 border-t border-gray-200">
+        {/* Edit Button */}
+        <button
+          onClick={() => onEditTask(task)}
+          className="px-2 py-1 text-xs font-medium bg-purple-100 hover:bg-purple-200 text-purple-700 rounded transition-all duration-200 flex items-center gap-1"
+        >
+          <Edit2 className="h-3 w-3" />
+          Edit
+        </button>
+
         {task.status !== 'todo' && (
           <button
             onClick={() => handleStatusChange('todo')}
@@ -193,7 +202,7 @@ const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }
   );
 };
 
-const TaskColumn = ({ title, status, tasks, onMoveTask, bulkActionMode, selectedTasks, onTaskSelect }) => {
+const TaskColumn = ({ title, status, tasks, onMoveTask, onEditTask, bulkActionMode, selectedTasks, onTaskSelect }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'task',
     drop: (item) => {
@@ -231,6 +240,7 @@ const TaskColumn = ({ title, status, tasks, onMoveTask, bulkActionMode, selected
               key={task.id}
               task={task}
               onMoveTask={onMoveTask}
+              onEditTask={onEditTask}
               bulkActionMode={bulkActionMode}
               isSelected={selectedTasks.has(task.id)}
               onTaskSelect={onTaskSelect}

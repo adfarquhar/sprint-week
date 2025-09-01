@@ -18,6 +18,7 @@ import {
 } from 'firebase/firestore';
 import TaskColumn from './TaskColumn';
 import AddTaskModal from './AddTaskModal';
+import EditTaskModal from './EditTaskModal';
 import ConfirmModal from './ConfirmModal';
 import { Plus, Archive, Download, CheckSquare, Square, Trash2, Search, Filter } from 'lucide-react';
 
@@ -26,6 +27,8 @@ const TaskBoard = () => {
   const { success, error } = useToast();
   const [tasks, setTasks] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -91,6 +94,35 @@ const TaskBoard = () => {
     } catch (error) {
       console.error('Error updating task:', error);
       error('Failed to move task. Please try again.');
+    }
+  };
+
+  const handleOpenEditModal = (task) => {
+    setEditingTask(task);
+    setShowEditModal(true);
+  };
+
+  const handleEditTask = async (taskId, taskData) => {
+    try {
+      const taskRef = doc(db, 'tasks', taskId);
+
+      // Convert due date string to Firestore Timestamp if provided
+      const dueDateTimestamp = taskData.dueDate
+        ? Timestamp.fromDate(new Date(taskData.dueDate + 'T12:00:00')) // Use noon to avoid timezone issues
+        : null;
+
+      await updateDoc(taskRef, {
+        ...taskData,
+        dueDate: dueDateTimestamp,
+        // Don't update createdDate, userId, or status through edit
+      });
+
+      setShowEditModal(false);
+      setEditingTask(null);
+      success('Task updated successfully!');
+    } catch (error) {
+      console.error('Error updating task:', error);
+      error('Failed to update task. Please try again.');
     }
   };
 
@@ -645,6 +677,7 @@ const TaskBoard = () => {
               status={column.status}
               tasks={filteredTasks.filter(task => task.status === column.status)}
               onMoveTask={handleMoveTask}
+              onEditTask={handleOpenEditModal}
               bulkActionMode={bulkActionMode}
               selectedTasks={selectedTasks}
               onTaskSelect={handleTaskSelect}
@@ -657,6 +690,18 @@ const TaskBoard = () => {
           <AddTaskModal
             onClose={() => setShowAddModal(false)}
             onSubmit={handleAddTask}
+          />
+        )}
+
+        {/* Edit Task Modal */}
+        {showEditModal && editingTask && (
+          <EditTaskModal
+            task={editingTask}
+            onClose={() => {
+              setShowEditModal(false);
+              setEditingTask(null);
+            }}
+            onSubmit={handleEditTask}
           />
         )}
 
