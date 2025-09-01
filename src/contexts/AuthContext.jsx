@@ -12,7 +12,14 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Add a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.warn('Auth initialization timeout - setting loading to false');
+      setLoading(false);
+    }, 10000); // 10 second timeout
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      clearTimeout(timeoutId); // Clear timeout on successful auth check
       if (user) {
         setUser(user);
         // Determine role based on email
@@ -22,9 +29,17 @@ export const AuthProvider = ({ children }) => {
         setUserRole(null);
       }
       setLoading(false);
+    }, (error) => {
+      // Handle auth errors
+      console.error('Auth error:', error);
+      clearTimeout(timeoutId);
+      setLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      clearTimeout(timeoutId);
+      unsubscribe();
+    };
   }, []);
 
   const login = async (email, password) => {
@@ -62,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

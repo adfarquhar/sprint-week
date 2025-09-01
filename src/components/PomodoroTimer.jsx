@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Settings, History, X } from 'lucide-react';
 
 const PomodoroTimer = () => {
@@ -107,19 +107,7 @@ const PomodoroTimer = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  // Break activities for suggestions
-  const breakActivities = [
-    'Take a short walk around your workspace',
-    'Do some gentle stretching exercises',
-    'Practice deep breathing or meditation',
-    'Have a healthy snack or drink water',
-    'Look away from your screen at something distant',
-    'Do some quick desk exercises',
-    'Listen to a favorite song',
-    'Write down three things you\'re grateful for',
-    'Call a friend or family member',
-    'Organize your workspace'
-  ];
+
 
   useEffect(() => {
     const handleTimerComplete = () => {
@@ -146,6 +134,18 @@ const PomodoroTimer = () => {
         });
 
         // Random break activity suggestion
+        const breakActivities = [
+          'Take a short walk around your workspace',
+          'Do some gentle stretching exercises',
+          'Practice deep breathing or meditation',
+          'Have a healthy snack or drink water',
+          'Look away from your screen at something distant',
+          'Do some quick desk exercises',
+          'Listen to a favorite song',
+          'Write down three things you\'re grateful for',
+          'Call a friend or family member',
+          'Organize your workspace'
+        ];
         const randomActivity = breakActivities[Math.floor(Math.random() * breakActivities.length)];
         setBreakActivity(randomActivity);
 
@@ -188,14 +188,14 @@ const PomodoroTimer = () => {
 
 
 
-  const toggleTimer = () => {
+  const toggleTimer = useCallback(() => {
     setIsActive(!isActive);
-  };
+  }, [isActive]);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     setIsActive(false);
     setTime((isBreak ? breakDuration : workDuration) * 60);
-  };
+  }, [isBreak, breakDuration, workDuration]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -233,7 +233,7 @@ const PomodoroTimer = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isActive, workDuration, breakDuration, isBreak]);
+  }, [isActive, workDuration, breakDuration, isBreak, resetTimer, toggleTimer]);
 
   // Request notification permission on mount
   useEffect(() => {

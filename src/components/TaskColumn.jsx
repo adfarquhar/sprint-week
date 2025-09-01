@@ -44,8 +44,8 @@ const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }
     }
   };
 
-  // Check if task is overdue (mock - would need due date field)
-  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'done';
+  // Check if task is overdue
+  const isOverdue = task.dueDate && task.dueDate.toDate() < new Date() && task.status !== 'done';
 
   const statusBadge = getStatusBadge(task.status);
   const priorityStyle = getPriorityColor(task.priority);
@@ -114,7 +114,7 @@ const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }
         {task.dueDate && (
           <div className={`flex items-center text-xs ${isOverdue ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
             <Calendar className="h-3 w-3 mr-1" />
-            <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+            <span>Due: {task.dueDate.toDate().toLocaleDateString()}</span>
             {isOverdue && <span className="ml-2 text-red-500">⚠️ OVERDUE</span>}
           </div>
         )}

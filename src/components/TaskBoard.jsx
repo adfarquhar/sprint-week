@@ -60,8 +60,14 @@ const TaskBoard = () => {
 
   const handleAddTask = async (taskData) => {
     try {
+      // Convert due date string to Firestore Timestamp if provided
+      const dueDateTimestamp = taskData.dueDate
+        ? Timestamp.fromDate(new Date(taskData.dueDate + 'T12:00:00')) // Use noon to avoid timezone issues
+        : null;
+
       await addDoc(collection(db, 'tasks'), {
         ...taskData,
+        dueDate: dueDateTimestamp,
         userId: user.uid,
         status: 'todo',
         createdDate: Timestamp.now(),
@@ -233,7 +239,7 @@ const TaskBoard = () => {
         });
         periodLabel = `Today (${new Date().toLocaleDateString()})`;
         break;
-      case 'week':
+      case 'week': {
         const weekStart = new Date(now);
         weekStart.setDate(now.getDate() - now.getDay());
         weekStart.setHours(0, 0, 0, 0);
@@ -246,6 +252,7 @@ const TaskBoard = () => {
         });
         periodLabel = `This Week (${weekStart.toLocaleDateString()} - ${now.toLocaleDateString()})`;
         break;
+      }
       case 'all':
         tasksToExport = tasks.filter(task => task.status === 'done');
         periodLabel = 'All Time';
@@ -321,7 +328,7 @@ const TaskBoard = () => {
         `"${task.priority || ''}"`,
         `"${task.status}"`,
         `"${task.timeEstimate || 0}"`,
-        `"${task.dueDate || ''}"`,
+        `"${task.dueDate ? task.dueDate.toDate().toISOString() : ''}"`,
         `"${task.completedDate ? task.completedDate.toDate().toISOString() : ''}"`,
         `"${task.createdDate ? task.createdDate.toDate().toISOString() : ''}"`
       ].join(','))

@@ -404,7 +404,7 @@ const ProgressMeter = () => {
                   <div className="text-sm font-bold text-red-700">
                     {tasks.filter(t => t.status === 'done' && (t.timeEstimate || 0) > 8).length}
                   </div>
-                  <div className="text-xs text-red-600">Large (>8h)</div>
+                  <div className="text-xs text-red-600">Large (&gt;8h)</div>
                 </div>
               </div>
             </div>
