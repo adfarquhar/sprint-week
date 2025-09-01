@@ -328,9 +328,9 @@ const TaskBoard = () => {
         `"${task.priority || ''}"`,
         `"${task.status}"`,
         `"${task.timeEstimate || 0}"`,
-        `"${task.dueDate ? task.dueDate.toDate().toISOString() : ''}"`,
-        `"${task.completedDate ? task.completedDate.toDate().toISOString() : ''}"`,
-        `"${task.createdDate ? task.createdDate.toDate().toISOString() : ''}"`
+        `"${task.dueDate && typeof task.dueDate.toDate === 'function' ? task.dueDate.toDate().toISOString() : ''}"`,
+        `"${task.completedDate && typeof task.completedDate.toDate === 'function' ? task.completedDate.toDate().toISOString() : ''}"`,
+        `"${task.createdDate && typeof task.createdDate.toDate === 'function' ? task.createdDate.toDate().toISOString() : ''}"`
       ].join(','))
     ].join('\n');
 

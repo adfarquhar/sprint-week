@@ -44,8 +44,24 @@ const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }
     }
   };
 
+  // Helper function to safely convert date to JavaScript Date
+  const safeToDate = (dateField) => {
+    if (!dateField) return null;
+    if (typeof dateField.toDate === 'function') {
+      return dateField.toDate(); // Firestore Timestamp
+    }
+    if (dateField instanceof Date) {
+      return dateField; // Already a Date object
+    }
+    if (typeof dateField === 'string') {
+      return new Date(dateField); // String date
+    }
+    return null;
+  };
+
   // Check if task is overdue
-  const isOverdue = task.dueDate && task.dueDate.toDate() < new Date() && task.status !== 'done';
+  const dueDateJS = safeToDate(task.dueDate);
+  const isOverdue = dueDateJS && dueDateJS < new Date() && task.status !== 'done';
 
   const statusBadge = getStatusBadge(task.status);
   const priorityStyle = getPriorityColor(task.priority);
@@ -111,10 +127,10 @@ const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }
         </div>
 
         {/* Due Date Indicator */}
-        {task.dueDate && (
+        {dueDateJS && (
           <div className={`flex items-center text-xs ${isOverdue ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
             <Calendar className="h-3 w-3 mr-1" />
-            <span>Due: {task.dueDate.toDate().toLocaleDateString()}</span>
+            <span>Due: {dueDateJS.toLocaleDateString()}</span>
             {isOverdue && <span className="ml-2 text-red-500">⚠️ OVERDUE</span>}
           </div>
         )}
@@ -165,11 +181,14 @@ const TaskItem = ({ task, onMoveTask, bulkActionMode, isSelected, onTaskSelect }
       </div>
 
       {/* Creation Date */}
-      {task.createdDate && (
-        <div className="mt-2 text-xs text-gray-400">
-          Created: {task.createdDate.toDate().toLocaleDateString()}
-        </div>
-      )}
+      {(() => {
+        const createdDateJS = safeToDate(task.createdDate);
+        return createdDateJS && (
+          <div className="mt-2 text-xs text-gray-400">
+            Created: {createdDateJS.toLocaleDateString()}
+          </div>
+        );
+      })()}
     </div>
   );
 };
