@@ -9,6 +9,7 @@ const VelocityChart = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState('week');
+  const [selectedBar, setSelectedBar] = useState(null);
 
   useEffect(() => {
     if (!user) return;
@@ -38,8 +39,10 @@ const VelocityChart = () => {
           periods.push({
             date: date.toISOString().split('T')[0],
             label: date.toLocaleDateString('en-US', { weekday: 'short' }),
+            fullDate: date.toLocaleDateString(),
             hours: 0,
-            tasks: 0
+            tasks: 0,
+            tooltip: null
           });
         }
         break;
@@ -50,8 +53,10 @@ const VelocityChart = () => {
           periods.push({
             date: date.toISOString().split('T')[0],
             label: date.getDate().toString(),
+            fullDate: date.toLocaleDateString(),
             hours: 0,
-            tasks: 0
+            tasks: 0,
+            tooltip: null
           });
         }
         break;
@@ -62,8 +67,10 @@ const VelocityChart = () => {
           periods.push({
             date: date.toISOString().split('T')[0],
             label: `Week ${12 - i}`,
+            fullDate: `${date.toLocaleDateString()} - ${new Date(date.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString()}`,
             hours: 0,
-            tasks: 0
+            tasks: 0,
+            tooltip: null
           });
         }
         break;
@@ -80,6 +87,16 @@ const VelocityChart = () => {
 
       period.tasks = periodTasks.length;
       period.hours = periodTasks.reduce((total, task) => total + (task.timeEstimate || 0), 0);
+
+      // Create tooltip data
+      if (periodTasks.length > 0) {
+        period.tooltip = {
+          date: period.fullDate,
+          tasks: periodTasks.length,
+          hours: period.hours.toFixed(1),
+          taskList: periodTasks.slice(0, 3).map(task => task.title)
+        };
+      }
     });
 
     return periods;
@@ -116,6 +133,39 @@ const VelocityChart = () => {
   const maxHours = Math.max(...velocityData.map(d => d.hours), 1);
   const maxTasks = Math.max(...velocityData.map(d => d.tasks), 1);
 
+  // Calculate trend line
+  const calculateTrend = (data, key) => {
+    const values = data.map(d => d[key]);
+    const n = values.length;
+    if (n < 2) return [];
+
+    const sumX = (n * (n - 1)) / 2;
+    const sumY = values.reduce((sum, val) => sum + val, 0);
+    const sumXY = values.reduce((sum, val, i) => sum + val * i, 0);
+    const sumXX = (n * (n - 1) * (2 * n - 1)) / 6;
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    return data.map((_, i) => slope * i + intercept);
+  };
+
+  const hoursTrend = calculateTrend(velocityData, 'hours');
+  const tasksTrend = calculateTrend(velocityData, 'tasks');
+
+  // Calculate moving average (3-day)
+  const calculateMovingAverage = (data, window = 3) => {
+    return data.map((_, index) => {
+      const start = Math.max(0, index - window + 1);
+      const end = index + 1;
+      const slice = data.slice(start, end);
+      return slice.reduce((sum, val) => sum + val, 0) / slice.length;
+    });
+  };
+
+  const hoursMovingAvg = calculateMovingAverage(velocityData.map(d => d.hours));
+  const tasksMovingAvg = calculateMovingAverage(velocityData.map(d => d.tasks));
+
   if (loading) {
     return (
       <div className="card">
@@ -149,71 +199,221 @@ const VelocityChart = () => {
         </select>
       </div>
 
-      {/* Overall Stats */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-blue-50 rounded-lg p-3">
-          <div className="flex items-center">
-            <Target className="h-4 w-4 text-blue-600 mr-2" />
-            <span className="text-sm text-blue-800">Total Hours</span>
+      {/* Enhanced Overall Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center mb-2">
+            <Target className="h-5 w-5 text-blue-600 mr-2" />
+            <span className="text-sm font-medium text-blue-800">Total Hours</span>
           </div>
-          <div className="text-2xl font-bold text-blue-900 mt-1">{stats.totalHours.toFixed(1)}</div>
+          <div className="text-2xl font-bold text-blue-900">{stats.totalHours.toFixed(1)}</div>
+          <div className="text-xs text-blue-600 mt-1">All time</div>
         </div>
-        <div className="bg-green-50 rounded-lg p-3">
-          <div className="flex items-center">
-            <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
-            <span className="text-sm text-green-800">Avg Velocity</span>
+
+        <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
+          <div className="flex items-center mb-2">
+            <TrendingUp className="h-5 w-5 text-green-600 mr-2" />
+            <span className="text-sm font-medium text-green-800">Avg Velocity</span>
           </div>
-          <div className="text-2xl font-bold text-green-900 mt-1">{stats.averageVelocity}h/day</div>
+          <div className="text-2xl font-bold text-green-900">{stats.averageVelocity}</div>
+          <div className="text-xs text-green-600 mt-1">Hours/day</div>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
+          <div className="flex items-center mb-2">
+            <BarChart3 className="h-5 w-5 text-purple-600 mr-2" />
+            <span className="text-sm font-medium text-purple-800">Total Tasks</span>
+          </div>
+          <div className="text-2xl font-bold text-purple-900">{stats.totalTasks}</div>
+          <div className="text-xs text-purple-600 mt-1">Completed</div>
+        </div>
+
+        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
+          <div className="flex items-center mb-2">
+            <Calendar className="h-5 w-5 text-orange-600 mr-2" />
+            <span className="text-sm font-medium text-orange-800">This Week</span>
+          </div>
+          <div className="text-2xl font-bold text-orange-900">{stats.recentTasks}</div>
+          <div className="text-xs text-orange-600 mt-1">Tasks done</div>
         </div>
       </div>
 
       {/* Hours Chart */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Hours Completed</h4>
-        <div className="flex items-end space-x-1 h-32">
-          {velocityData.map((data, index) => (
-            <div key={index} className="flex-1 flex flex-col items-center">
-              <div
-                className="bg-blue-500 rounded-t w-full transition-all duration-300 hover:bg-blue-600"
-                style={{
-                  height: `${(data.hours / maxHours) * 100}%`,
-                  minHeight: data.hours > 0 ? '4px' : '0px'
-                }}
-              ></div>
-              <div className="text-xs text-gray-600 mt-2 transform -rotate-45 origin-top">
-                {data.label}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {data.hours.toFixed(1)}h
-              </div>
+        <div className="flex justify-between items-center mb-3">
+          <h4 className="text-sm font-medium text-gray-700">Hours Completed</h4>
+          <div className="flex items-center space-x-4 text-xs">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-blue-500 rounded mr-1"></div>
+              <span>Actual</span>
             </div>
-          ))}
+            <div className="flex items-center">
+              <div className="w-3 h-0.5 bg-red-400 border-t-2 border-dashed mr-1"></div>
+              <span>Trend</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-0.5 bg-green-400 mr-1"></div>
+              <span>Avg</span>
+            </div>
+          </div>
+        </div>
+        <div className="relative">
+          <div className="flex items-end space-x-1 h-32">
+            {velocityData.map((data, index) => (
+              <div key={index} className="flex-1 flex flex-col items-center group relative">
+                {/* Trend line */}
+                {hoursTrend[index] && (
+                  <div
+                    className="absolute bottom-0 left-1/2 w-0.5 bg-red-400 opacity-60"
+                    style={{
+                      height: `${Math.max(0, (hoursTrend[index] / maxHours) * 100)}%`,
+                      transform: 'translateX(-50%)',
+                      borderTop: index > 0 ? '1px dashed #f87171' : 'none'
+                    }}
+                  ></div>
+                )}
+                {/* Moving average line */}
+                {hoursMovingAvg[index] && (
+                  <div
+                    className="absolute bottom-0 left-1/2 w-0.5 bg-green-400 opacity-60"
+                    style={{
+                      height: `${Math.max(0, (hoursMovingAvg[index] / maxHours) * 100)}%`,
+                      transform: 'translateX(-50%)'
+                    }}
+                  ></div>
+                )}
+                {/* Bar */}
+                <div
+                  className="bg-blue-500 rounded-t w-full transition-all duration-300 hover:bg-blue-600 cursor-pointer relative"
+                  style={{
+                    height: `${(data.hours / maxHours) * 100}%`,
+                    minHeight: data.hours > 0 ? '4px' : '0px'
+                  }}
+                  onClick={() => data.tooltip && setSelectedBar({ ...data.tooltip, type: 'hours' })}
+                >
+                  {/* Value label on bar */}
+                  {data.hours > 0 && (
+                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-medium text-blue-700 bg-white px-1 rounded shadow-sm">
+                      {data.hours.toFixed(1)}
+                    </div>
+                  )}
+                </div>
+                <div className="text-xs text-gray-600 mt-2 transform -rotate-45 origin-top">
+                  {data.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Tasks Chart */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Tasks Completed</h4>
-        <div className="flex items-end space-x-1 h-24">
-          {velocityData.map((data, index) => (
-            <div key={index} className="flex-1 flex flex-col items-center">
-              <div
-                className="bg-green-500 rounded-t w-full transition-all duration-300 hover:bg-green-600"
-                style={{
-                  height: `${(data.tasks / maxTasks) * 100}%`,
-                  minHeight: data.tasks > 0 ? '4px' : '0px'
-                }}
-              ></div>
-              <div className="text-xs text-gray-600 mt-2 transform -rotate-45 origin-top">
-                {data.label}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {data.tasks}
-              </div>
+        <div className="flex justify-between items-center mb-3">
+          <h4 className="text-sm font-medium text-gray-700">Tasks Completed</h4>
+          <div className="flex items-center space-x-4 text-xs">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-green-500 rounded mr-1"></div>
+              <span>Actual</span>
             </div>
-          ))}
+            <div className="flex items-center">
+              <div className="w-3 h-0.5 bg-red-400 border-t-2 border-dashed mr-1"></div>
+              <span>Trend</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-0.5 bg-purple-400 mr-1"></div>
+              <span>Avg</span>
+            </div>
+          </div>
+        </div>
+        <div className="relative">
+          <div className="flex items-end space-x-1 h-24">
+            {velocityData.map((data, index) => (
+              <div key={index} className="flex-1 flex flex-col items-center group relative">
+                {/* Trend line */}
+                {tasksTrend[index] && (
+                  <div
+                    className="absolute bottom-0 left-1/2 w-0.5 bg-red-400 opacity-60"
+                    style={{
+                      height: `${Math.max(0, (tasksTrend[index] / maxTasks) * 100)}%`,
+                      transform: 'translateX(-50%)',
+                      borderTop: index > 0 ? '1px dashed #f87171' : 'none'
+                    }}
+                  ></div>
+                )}
+                {/* Moving average line */}
+                {tasksMovingAvg[index] && (
+                  <div
+                    className="absolute bottom-0 left-1/2 w-0.5 bg-purple-400 opacity-60"
+                    style={{
+                      height: `${Math.max(0, (tasksMovingAvg[index] / maxTasks) * 100)}%`,
+                      transform: 'translateX(-50%)'
+                    }}
+                  ></div>
+                )}
+                {/* Bar */}
+                <div
+                  className="bg-green-500 rounded-t w-full transition-all duration-300 hover:bg-green-600 cursor-pointer relative"
+                  style={{
+                    height: `${(data.tasks / maxTasks) * 100}%`,
+                    minHeight: data.tasks > 0 ? '4px' : '0px'
+                  }}
+                  onClick={() => data.tooltip && setSelectedBar({ ...data.tooltip, type: 'tasks' })}
+                >
+                  {/* Value label on bar */}
+                  {data.tasks > 0 && (
+                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-medium text-green-700 bg-white px-1 rounded shadow-sm">
+                      {data.tasks}
+                    </div>
+                  )}
+                </div>
+                <div className="text-xs text-gray-600 mt-2 transform -rotate-45 origin-top">
+                  {data.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Tooltip */}
+      {selectedBar && (
+        <div className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">
+                {selectedBar.date}
+              </h4>
+              <div className="text-sm text-gray-600 space-y-1">
+                <div className="flex items-center">
+                  <span className={`inline-block w-3 h-3 rounded mr-2 ${selectedBar.type === 'hours' ? 'bg-blue-500' : 'bg-green-500'}`}></span>
+                  {selectedBar.tasks} task{selectedBar.tasks !== 1 ? 's' : ''} completed
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-block w-3 h-3 bg-blue-500 rounded mr-2"></span>
+                  {selectedBar.hours} hours worked
+                </div>
+              </div>
+              {selectedBar.taskList && selectedBar.taskList.length > 0 && (
+                <div className="mt-3">
+                  <div className="text-xs font-medium text-gray-700 mb-1">Recent tasks:</div>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    {selectedBar.taskList.map((task, index) => (
+                      <li key={index} className="truncate">• {task}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setSelectedBar(null)}
+              className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Summary */}
       <div className="border-t border-gray-200 pt-4">

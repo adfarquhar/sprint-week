@@ -7,7 +7,9 @@ const AddTaskModal = ({ onClose, onSubmit }) => {
     description: '',
     assignedTo: '',
     timeEstimate: '',
-    priority: 'medium'
+    priority: 'medium',
+    dueDate: '',
+    blockReason: ''
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -95,9 +97,12 @@ const AddTaskModal = ({ onClose, onSubmit }) => {
               className={`input-field ${errors.title ? 'border-red-500' : ''}`}
               placeholder="Enter task title"
               required
+              aria-required="true"
+              aria-describedby={errors.title ? "title-error" : undefined}
+              aria-invalid={errors.title ? "true" : "false"}
             />
             {errors.title && (
-              <p className="text-red-500 text-xs mt-1">{errors.title}</p>
+              <p id="title-error" className="text-red-500 text-xs mt-1" role="alert">{errors.title}</p>
             )}
           </div>
 
@@ -171,6 +176,36 @@ const AddTaskModal = ({ onClose, onSubmit }) => {
               <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
+          </div>
+
+          <div>
+            <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
+              Due Date (Optional)
+            </label>
+            <input
+              type="date"
+              id="dueDate"
+              name="dueDate"
+              value={formData.dueDate}
+              onChange={handleChange}
+              min={new Date().toISOString().split('T')[0]}
+              className="input-field"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="blockReason" className="block text-sm font-medium text-gray-700 mb-1">
+              Block Reason (Optional)
+            </label>
+            <input
+              type="text"
+              id="blockReason"
+              name="blockReason"
+              value={formData.blockReason}
+              onChange={handleChange}
+              className="input-field"
+              placeholder="Why is this task blocked?"
+            />
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

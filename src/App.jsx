@@ -8,6 +8,7 @@ import './App.css';
 
 // Lazy load components for code splitting
 const Login = lazy(() => import('./components/Login'));
+const Register = lazy(() => import('./components/Register'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 function PrivateRoute({ children }) {
@@ -40,6 +41,10 @@ function AppRoutes() {
       </div>
     }>
       <Routes>
+        <Route
+          path="/register"
+          element={user ? <Navigate to="/" /> : <Register />}
+        />
         <Route
           path="/login"
           element={user ? <Navigate to="/" /> : <Login />}
