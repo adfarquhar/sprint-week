@@ -1,0 +1,30 @@
+mutation CreateTask @auth(level: USER) {
+  task_insert(data: {
+    title: "New Task",
+    description: "A new task to be completed",
+    status: "TODO",
+    sprintId_expr: "uuidV4()",
+    createdAt_expr: "request.time"
+  })
+}
+
+query ListTasks @auth(level: USER) {
+  tasks {
+    id
+    title
+    description
+    status
+    createdAt
+  }
+}
+
+mutation UpdateTask($id: UUID!, $status: String!) @auth(level: USER) {
+  task_update(
+    key: { id: $id }
+    data: { status: $status }
+  )
+}
+
+mutation DeleteTask($id: UUID!) @auth(level: USER) {
+  task_delete(key: { id: $id })
+}

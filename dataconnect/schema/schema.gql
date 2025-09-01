@@ -1,0 +1,42 @@
+type User @table {
+  displayName: String!
+  email: String!
+  createdAt: Timestamp!
+  photoUrl: String
+}
+
+type Sprint @table {
+  name: String!
+  startDate: Date!
+  endDate: Date!
+  overallGoal: String!
+  createdAt: Timestamp!
+  description: String
+  isCompleted: Boolean
+  creator: User
+}
+
+type SprintParticipant @table(key: ["user", "sprint"]) {
+  joinedAt: Timestamp!
+  role: String
+  user: User!
+  sprint: Sprint!
+}
+
+type Task @table {
+  title: String!
+  status: String!
+  createdAt: Timestamp!
+  description: String
+  dueDate: Date
+  completedAt: Timestamp
+  assignee: User
+  sprint: Sprint
+}
+
+type Comment @table {
+  content: String!
+  createdAt: Timestamp!
+  author: User
+  task: Task
+}

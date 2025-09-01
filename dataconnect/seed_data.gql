@@ -1,0 +1,58 @@
+mutation SeedDatabase @auth(level: NO_ACCESS) {
+  user_upsertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      displayName: "Bob User",
+      email: "bob@example.com",
+      createdAt: "2024-01-01T00:00:00Z"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      displayName: "Alice User",
+      email: "alice@example.com",
+      createdAt: "2024-01-01T00:00:00Z"
+    }
+  ])
+  sprint_upsertMany(data: [
+    {
+      id: "650e8400-e29b-41d4-a716-446655440000",
+      name: "Sample Sprint",
+      overallGoal: "Complete sample tasks",
+      startDate: "2024-01-01",
+      endDate: "204-01-15",
+      createdAt: "2024-01-01T00:00:00Z",
+      creatorId: "550e8400-e29b-41d4-a716-446655440000"
+    }
+  ])
+  task_upsertMany(data: [
+    {
+      id: "750e8400-e29b-41d4-a716-446655440000",
+      title: "Sample Task",
+      status: "Open",
+      createdAt: "2024-01-01T00:00:00Z",
+      sprintId: "650e8400-e29b-41d4-a716-446655440000",
+      assigneeId: "550e8400-e29b-41d4-a716-446655440001"
+    }
+  ])
+  sprintParticipant_upsertMany(data: [
+    {
+      sprintId: "650e8400-e29b-41d4-a716-446655440000",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      joinedAt: "2024-01-01T00:00:00Z"
+    },
+        {
+      sprintId: "650e8400-e29b-41d4-a716-446655440000",
+      userId: "550e8400-e29b-41d4-a716-446655440001",
+      joinedAt: "2024-01-01T00:00:00Z"
+    }
+  ])
+    comment_upsertMany(data: [
+    {
+      id: "850e8400-e29b-41d4-a716-446655440000",
+      content: "Sample Comment",
+      createdAt: "2024-01-01T00:00:00Z",
+      authorId: "550e8400-e29b-41d4-a716-446655440000",
+      taskId: "750e8400-e29b-41d4-a716-446655440000"
+    }
+  ])
+}
