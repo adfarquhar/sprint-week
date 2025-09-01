@@ -1,0 +1,50 @@
+{
+  "name": "sprint-tracker",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "sprint:start": "pnpm dev",
+    "sprint:build": "pnpm build && echo '🚀 Sprint Tracker built successfully!'",
+    "sprint:deploy": "pnpm build && firebase deploy --only hosting",
+    "sprint:clean": "rm -rf dist node_modules/.vite .firebase",
+    "sprint:setup": "pnpm install && pnpm dev",
+    "sprint:test": "echo '🧪 Running Sprint Tracker tests...' && pnpm lint",
+    "sprint:firebase-init": "firebase init hosting --project sister-sprint-week",
+    "db:seed": "node scripts/seed-database.js",
+    "db:backup": "firebase firestore:export firestore-backup --project sister-sprint-week",
+    "logs:clear": "rm -f firebase-debug.log",
+    "q:start": "pnpm dev",
+    "q:build": "pnpm build",
+    "q:deploy": "pnpm sprint:deploy"
+  },
+  "dependencies": {
+    "firebase": "^12.2.1",
+    "lucide-react": "^0.542.0",
+    "react": "^19.1.1",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^19.1.1",
+    "react-hook-form": "^7.62.0",
+    "react-router-dom": "^7.8.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.12",
+    "vite": "^7.1.2"
+  }
+}

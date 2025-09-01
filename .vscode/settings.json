@@ -1,3 +1,26 @@
 {
-  "IDX.agenticWorkspace": true
+  "IDX.agenticWorkspace": true,
+
+  // Sprint Tracker specific settings
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Firebase specific
+  "files.associations": {
+    ".env.local": "properties"
+  },
+
+  // React specific
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+
+  // Terminal settings for this workspace
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "terminal.integrated.shellArgs.linux": ["-l"],
+  "terminal.integrated.shellArgs.osx": ["-l"]
 }

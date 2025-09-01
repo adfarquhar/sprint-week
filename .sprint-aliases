@@ -1,0 +1,21 @@
+# Sprint Tracker Local Aliases
+# Add this line to your ~/.zshrc or ~/.bashrc:
+# source /Users/amy/Projects/sprint-week/.sprint-aliases
+
+# Sprint Tracker specific aliases
+alias sprint-status='/Users/amy/Projects/sprint-week/sprint-commands.sh status'
+alias sprint-start='/Users/amy/Projects/sprint-week/sprint-commands.sh start'
+alias sprint-build='/Users/amy/Projects/sprint-week/sprint-commands.sh build'
+alias sprint-deploy='/Users/amy/Projects/sprint-week/sprint-commands.sh deploy'
+alias sprint-clean='/Users/amy/Projects/sprint-week/sprint-commands.sh clean'
+alias sprint-logs='/Users/amy/Projects/sprint-week/sprint-commands.sh logs'
+
+# Quick aliases
+alias ss='sprint-start'
+alias sb='sprint-build'
+alias sd='sprint-deploy'
+alias sc='sprint-clean'
+
+# Project navigation
+alias cdsprint='cd /Users/amy/Projects/sprint-week'
+alias sprint='cdsprint && sprint-status'
