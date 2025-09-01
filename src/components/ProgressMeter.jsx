@@ -1,14 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { Target, TrendingUp, Clock, CheckCircle } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { Target, TrendingUp, Clock, CheckCircle, Settings } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 import { db } from '../firebase';
 import { collection, query, onSnapshot } from 'firebase/firestore';
+
+const GoalEditModal = ({ isOpen, onClose, currentGoal, onSave }) => {
+  const [tempGoal, setTempGoal] = useState(currentGoal);
+
+  const handleSave = () => {
+    const goal = parseFloat(tempGoal);
+    if (goal && goal > 0) {
+      onSave(goal);
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Sprint Goal</h3>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Sprint Goal (hours)
+          </label>
+          <input
+            type="number"
+            value={tempGoal}
+            onChange={(e) => setTempGoal(e.target.value)}
+            min="1"
+            step="0.5"
+            className="input-field w-full"
+            placeholder="40"
+          />
+        </div>
+        <div className="flex justify-end space-x-3">
+          <button
+            onClick={onClose}
+            className="btn-secondary"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="btn-primary"
+          >
+            Save Goal
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ProgressMeter = () => {
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [sprintGoal, setSprintGoal] = useState(40); // Default 40 hours
   const [loading, setLoading] = useState(true);
+  const [showGoalModal, setShowGoalModal] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -130,20 +181,17 @@ const ProgressMeter = () => {
               <TrendingUp className="h-4 w-4 text-gray-500 mr-1" />
               <span className="text-sm font-medium text-gray-700">This Sprint</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between">
               <span className={`text-sm font-semibold ${getProgressColor(sprintPercentage)}`}>
                 {sprintHours.toFixed(1)}h / {sprintGoal}h
               </span>
               <button
-                onClick={() => {
-                  const newGoal = prompt('Set sprint goal (hours):', sprintGoal);
-                  if (newGoal && !isNaN(newGoal)) {
-                    setSprintGoal(parseFloat(newGoal));
-                  }
-                }}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                onClick={() => setShowGoalModal(true)}
+                className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                title="Edit sprint goal"
               >
-                Edit
+                <Settings className="h-3 w-3 mr-1" />
+                Edit Goal
               </button>
             </div>
           </div>
@@ -159,19 +207,7 @@ const ProgressMeter = () => {
           </div>
         </div>
 
-        {/* Sprint Goal Input */}
-        <div className="border-t pt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sprint Goal (hours)
-          </label>
-          <input
-            type="number"
-            value={sprintGoal}
-            onChange={(e) => setSprintGoal(parseFloat(e.target.value) || 0)}
-            min="1"
-            className="input-field"
-          />
-        </div>
+
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 text-center">
@@ -185,6 +221,14 @@ const ProgressMeter = () => {
           </div>
         </div>
       </div>
+
+      {/* Goal Edit Modal */}
+      <GoalEditModal
+        isOpen={showGoalModal}
+        onClose={() => setShowGoalModal(false)}
+        currentGoal={sprintGoal}
+        onSave={setSprintGoal}
+      />
     </div>
   );
 };

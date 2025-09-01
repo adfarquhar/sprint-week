@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserX, UserCheck, Calendar, AlertTriangle } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { db } from '../firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
 

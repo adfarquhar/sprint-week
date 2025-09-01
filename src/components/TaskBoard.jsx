@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../contexts/ToastContext';
+import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import { db } from '../firebase';
 import {
   collection,
@@ -123,7 +123,7 @@ const TaskBoard = () => {
     });
 
     if (completedToday.length === 0) {
-      alert('No tasks completed today to export.');
+      error('No tasks completed today to export.');
       return;
     }
 
@@ -133,10 +133,10 @@ const TaskBoard = () => {
     });
 
     navigator.clipboard.writeText(summary).then(() => {
-      alert('Today\'s accomplishments copied to clipboard!');
+      success('Today\'s accomplishments copied to clipboard!');
     }).catch(err => {
       console.error('Could not copy text:', err);
-      alert('Failed to copy to clipboard.');
+      error('Failed to copy to clipboard.');
     });
   };
 
@@ -159,24 +159,24 @@ const TaskBoard = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="space-y-6">
         {/* Controls */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
           <button
             onClick={() => setShowAddModal(true)}
-            className="btn-primary flex items-center"
+            className="btn-primary flex items-center justify-center sm:justify-start"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Task
           </button>
           <button
             onClick={handleDailyReset}
-            className="btn-secondary flex items-center"
+            className="btn-secondary flex items-center justify-center sm:justify-start"
           >
             <Archive className="h-4 w-4 mr-2" />
             Daily Reset
           </button>
           <button
             onClick={handleExport}
-            className="btn-secondary flex items-center"
+            className="btn-secondary flex items-center justify-center sm:justify-start"
           >
             <Download className="h-4 w-4 mr-2" />
             Export Summary
@@ -203,6 +203,24 @@ const TaskBoard = () => {
             onSubmit={handleAddTask}
           />
         )}
+
+        {/* Confirm Modal */}
+        <ConfirmModal
+          isOpen={showConfirmModal}
+          title="Daily Reset"
+          message="Are you sure you want to reset for the day? Completed tasks will be archived."
+          onConfirm={async () => {
+            if (confirmAction) {
+              await confirmAction();
+            }
+            setShowConfirmModal(false);
+            setConfirmAction(null);
+          }}
+          onCancel={() => {
+            setShowConfirmModal(false);
+            setConfirmAction(null);
+          }}
+        />
       </div>
     </DndProvider>
   );

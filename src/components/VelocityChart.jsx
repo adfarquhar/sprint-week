@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, BarChart3, Target, Calendar } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { db } from '../firebase';
 import { collection, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
 

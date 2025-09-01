@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToast } from '../contexts/ToastContext';
+import { useToast } from '../hooks/useToast';
 import Toast from './Toast';
 
 const ToastContainer = () => {

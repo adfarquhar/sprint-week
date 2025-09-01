@@ -59,37 +59,37 @@ const TaskItem = ({ task, onMoveTask }) => {
         </div>
       )}
 
-      <div className="flex gap-1">
+      <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
         {task.status !== 'todo' && (
           <button
             onClick={() => handleStatusChange('todo')}
-            className="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded transition-colors"
+            className="px-3 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-all duration-200 hover:shadow-sm flex-1 min-w-0"
           >
-            To Do
+            Move to To Do
           </button>
         )}
         {task.status !== 'inprogress' && (
           <button
             onClick={() => handleStatusChange('inprogress')}
-            className="px-2 py-1 text-xs bg-blue-200 hover:bg-blue-300 rounded transition-colors"
+            className="px-3 py-2 text-sm font-medium bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md transition-all duration-200 hover:shadow-sm flex-1 min-w-0"
           >
-            In Progress
+            Start Progress
           </button>
         )}
         {task.status !== 'blocked' && (
           <button
             onClick={() => handleStatusChange('blocked')}
-            className="px-2 py-1 text-xs bg-red-200 hover:bg-red-300 rounded transition-colors"
+            className="px-3 py-2 text-sm font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-all duration-200 hover:shadow-sm flex-1 min-w-0"
           >
-            Blocked
+            Mark Blocked
           </button>
         )}
         {task.status !== 'done' && (
           <button
             onClick={() => handleStatusChange('done')}
-            className="px-2 py-1 text-xs bg-green-200 hover:bg-green-300 rounded transition-colors"
+            className="px-3 py-2 text-sm font-medium bg-green-100 hover:bg-green-200 text-green-700 rounded-md transition-all duration-200 hover:shadow-sm flex-1 min-w-0"
           >
-            Done
+            Mark Done
           </button>
         )}
       </div>
