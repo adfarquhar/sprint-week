@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { db } from '../firebase';
 import {
   collection,
@@ -17,12 +18,16 @@ import {
 } from 'firebase/firestore';
 import TaskColumn from './TaskColumn';
 import AddTaskModal from './AddTaskModal';
+import ConfirmModal from './ConfirmModal';
 import { Plus, Archive, Download } from 'lucide-react';
 
 const TaskBoard = () => {
-  const { user, userRole } = useAuth();
+  const { user } = useAuth();
+  const { success, error } = useToast();
   const [tasks, setTasks] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,9 +60,10 @@ const TaskBoard = () => {
         completedDate: null
       });
       setShowAddModal(false);
+      success('Task added successfully!');
     } catch (error) {
       console.error('Error adding task:', error);
-      alert('Failed to add task. Please try again.');
+      error('Failed to add task. Please try again.');
     }
   };
 
@@ -70,38 +76,38 @@ const TaskBoard = () => {
       });
     } catch (error) {
       console.error('Error updating task:', error);
-      alert('Failed to move task. Please try again.');
+      error('Failed to move task. Please try again.');
     }
   };
 
-  const handleDailyReset = async () => {
-    if (!confirm('Are you sure you want to reset for the day? Completed tasks will be archived.')) {
-      return;
-    }
-
+  const handleDailyReset = () => {
     const completedTasks = tasks.filter(task => task.status === 'done');
     if (completedTasks.length === 0) {
-      alert('No completed tasks to archive.');
+      error('No completed tasks to archive.');
       return;
     }
 
-    try {
-      const batch = writeBatch(db);
-      const today = Timestamp.now();
+    setConfirmAction(() => async () => {
+      try {
+        const batch = writeBatch(db);
+        const today = Timestamp.now();
 
-      completedTasks.forEach(task => {
-        const archivedRef = doc(collection(db, 'daily_archive'));
-        batch.set(archivedRef, { ...task, archivedDate: today, userId: user.uid });
-        const taskRef = doc(db, 'tasks', task.id);
-        batch.delete(taskRef);
-      });
+        completedTasks.forEach(task => {
+          const archivedRef = doc(collection(db, 'daily_archive'));
+          batch.set(archivedRef, { ...task, archivedDate: today, userId: user.uid });
+          const taskRef = doc(db, 'tasks', task.id);
+          batch.delete(taskRef);
+        });
 
-      await batch.commit();
-      alert('Daily reset complete! Completed tasks archived.');
-    } catch (error) {
-      console.error('Error during daily reset:', error);
-      alert('Failed to reset. Please try again.');
-    }
+        await batch.commit();
+        success('Daily reset complete! Completed tasks archived.');
+      } catch (error) {
+        console.error('Error during daily reset:', error);
+        error('Failed to reset. Please try again.');
+      }
+    });
+
+    setShowConfirmModal(true);
   };
 
   const handleExport = () => {
